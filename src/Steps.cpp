@@ -24,7 +24,29 @@
 #include "stdafx.h"
 
 
+int factorial(int N)
+{
+	if (N == 1 || N == 0)
+		return 1;
+	else
+		return N * factorial(N - 1);
+}
+
+int num_of_permutations(int ones, int twos)
+{
+	return factorial(ones + twos) / (factorial(ones)*factorial(twos));
+}
+
+int get_steps_recur(int ones, int twos)
+{
+	if (ones == 1)
+		return ones + twos;
+	if (ones == 0)
+		return 1;
+	return num_of_permutations(ones, twos) + get_steps_recur(ones - 2, twos + 1);
+}
+
 int get_steps(int s)
 {
-	return 0;
+	return get_steps_recur(s, 0);
 }
