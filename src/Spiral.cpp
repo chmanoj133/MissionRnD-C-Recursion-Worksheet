@@ -32,9 +32,54 @@ Note : Check the function Parameters ,Its a double pointer .
 
 
 #include "stdafx.h"
-#include<stdlib.h>
+#include <stdlib.h>
+
+int *spiral_wrapper(int rows, int columns, int **input_array, int rounds, int *ans, int index)
+{
+	int i;
+
+	for (i = rounds; i < columns - 1 - rounds; i++, index++)
+		ans[index] = input_array[rounds][i];
+	if (index >= rows*columns)
+		return ans;
+
+	for (i = rounds; i < rows - 1  - rounds; i++, index++)
+		ans[index] = input_array[i][columns - 1 - rounds];
+	if (index >= rows*columns)
+		return ans;
+
+	for (i = columns - 1 - rounds; i >= 1 + rounds; i--, index++)
+		ans[index] = input_array[rows - 1 - rounds][i];
+	if (index >= rows*columns)
+		return ans;
+
+	for (i = rows - 1 - rounds; i >= 1 + rounds; i--, index++)
+		ans[index] = input_array[i][rounds];
+	if (index >= rows*columns)
+		return ans;
+
+	rounds++;
+	if (index == rows*columns - 1 && rows % 2 == 1 && columns % 2 == 1)
+	{
+		if (columns - rounds - 1 >= 0)
+			ans[index] = input_array[rounds][columns - rounds - 1];
+		index++;
+		return ans;
+	}
+
+	return spiral_wrapper(rows, columns, input_array, rounds, ans, index);
+}
 
 int *spiral(int rows, int columns, int **input_array)
 {
-	return NULL;
+	if (rows <= 0 || columns <= 0 || input_array == NULL)
+		return NULL;
+
+	int *ans = (int*)calloc(rows*columns, sizeof(int));
+	if (rows == 1 && columns == 1)
+	{
+		ans[0] = input_array[0][0];
+		return ans;
+	}
+	return spiral_wrapper(rows, columns, input_array, 0, ans, 0);
 }
