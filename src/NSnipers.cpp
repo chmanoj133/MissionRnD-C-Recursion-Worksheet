@@ -1,5 +1,5 @@
 /*
-There is a general and he has N Snipers in his control . He has a battefield of NxN Blocks .
+There is a general and he has N Snipers in his control. He has a battefield of NxN Blocks .
 He now has to place all N snipers in the battle field such that he can have control of all Blocks,
 ie each block should atleast have One sniper having control on it .
 
@@ -43,6 +43,63 @@ P.S: The Above Problem is just a modified version of a popular BackTracking prob
 */
 
 #include "stdafx.h"
-int solve_nsnipers(int *battlefield, int n){
+
+int is_crct_place(int *battlefield, int row, int column, int order)
+{
+	int i, j;
+
+	// column check
+	for (i = 0; i < order; i++)
+	{
+		if (*((battlefield + i*order) + column))
+			return 0;			
+	}
+
+	// diagonal check (y = x)
+	for (i = row, j = column; i >= 0 && j >= 0; i--, j--)
+	{
+		if (*((battlefield + i*order) + j))
+			return 0;
+	}
+
+	//diagonal check (y = -x)
+	for (i = row, j = column; i < order && j >= 0; i++, j--)
+	{
+		if (*((battlefield + i*order) + j))
+			return 0;
+	}
+	
+	return 1;
+}
+
+
+// wrapper function
+int nsnipers_placements(int *battlefield, int row, int order)
+{
+	int i;
+
+	if (row >= order)
+		return 1;
+
+	for (i = 0; i < order; i++)
+	{
+		if (is_crct_place(battlefield, row, i, order))
+		{
+			*((battlefield + row*order) + i) = 1;
+
+			if (nsnipers_placements(battlefield, row + 1, order))
+				return 1;
+
+			*((battlefield + row*order) + i) = 0;
+		}
+	}
 	return 0;
 }
+
+int solve_nsnipers(int *battlefield, int n)
+{
+	if (battlefield == NULL || n <= 3)
+		return 0;
+	return nsnipers_placements(battlefield, 0, n);
+}
+
